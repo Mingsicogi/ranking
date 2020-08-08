@@ -2,6 +2,10 @@ server:
   port: 1001
 
 
+# redis properties
+
+
+# common properties
 sample:
   data:
     count: 100
