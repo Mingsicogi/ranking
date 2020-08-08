@@ -1,3 +1,7 @@
+server:
+  port: 1001
+
+
 sample:
   data:
-    count: 1000000
+    count: 100
