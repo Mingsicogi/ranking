@@ -27,7 +27,7 @@ public class InitializeConfiguration {
     @PostConstruct
     private void initDataSetting() {
         List<User> sampleUserList = Stream.iterate(1, count -> count + 1).limit(sampleCount)
-                .map(count -> new User(RandomStringUtils.randomAlphabetic(10) + "_" + count, new BigInteger(RandomStringUtils.randomNumeric(3, 20)))).collect(Collectors.toList());
+                .map(count -> new User(count, RandomStringUtils.randomAlphabetic(10) + "_" + count, new BigInteger(RandomStringUtils.randomNumeric(3, 20)))).collect(Collectors.toList());
 
         userRepository.saveAll(sampleUserList);
     }

@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/rank/manage")
+@RequestMapping(value = "/rankData/manage/onMongo")
 @RequiredArgsConstructor
-public class Manage {
+public class MongoRankDataManage {
 
     private final UserRepository userRepository;
 
-    @GetMapping("/findAll/sampleData")
+    @GetMapping("/findAll")
     public ResponseEntity<Object> getAll() {
         List<User> all = userRepository.findAll();
 

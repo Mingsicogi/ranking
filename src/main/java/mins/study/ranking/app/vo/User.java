@@ -16,10 +16,17 @@ public class User {
     @Id
     private String id;
 
+    private Integer seqId;
     private String username;
     private BigInteger score;
 
     public User(String username, BigInteger score) {
+        this.username = username;
+        this.score = score;
+    }
+
+    public User(Integer seqId, String username, BigInteger score) {
+        this.seqId = seqId;
         this.username = username;
         this.score = score;
     }

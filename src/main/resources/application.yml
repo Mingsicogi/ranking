@@ -3,6 +3,10 @@ server:
 
 
 # redis properties
+redis:
+  host: localhost
+  port: 6379
+  db: 1
 
 
 # common properties

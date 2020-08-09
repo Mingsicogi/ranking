@@ -4,6 +4,8 @@ import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisConnectionException;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
+import io.lettuce.core.codec.ByteArrayCodec;
+import io.lettuce.core.codec.RedisCodec;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -29,10 +31,10 @@ public class RedisConfiguration {
     }
 
     @Bean
-    public StatefulRedisConnection<?, ?> statefulRedisConnection(RedisClient redisClient) {
-        StatefulRedisConnection<String, String> connect = null;
+    public StatefulRedisConnection<byte[], byte[]> statefulRedisConnection(RedisClient redisClient) {
+        StatefulRedisConnection<byte[], byte[]> connect = null;
         try {
-            connect = redisClient.connect();
+            connect = redisClient.connect(redisCodec());
             log.info("### Redis Connection Success!! ###");
 
         } catch (RedisConnectionException e) {
@@ -40,5 +42,10 @@ public class RedisConfiguration {
         }
 
         return connect;
+    }
+
+
+    private RedisCodec<byte[], byte[]> redisCodec() {
+        return new ByteArrayCodec();
     }
 }
