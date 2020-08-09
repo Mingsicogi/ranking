@@ -8,7 +8,8 @@ import lombok.Getter;
 public enum ExceptionCd {
 
     NOT_FOUND_DATA("Not exist data"),
-    NOT_DEFINED_EXCEPTION("Not defined exception. please ask to manager.")
+    REDIS_PROCESSING_EXCEPTION("redis "),
+    NOT_DEFINED_EXCEPTION("Not defined exception. please ask to manager."),
 
     ;
 
