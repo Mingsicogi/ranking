@@ -10,4 +10,6 @@ public interface RedisCommonService {
     void put(Object key, Object value);
 
     void bulkPut(Object key, List<Object> keyList, List<Object> valueList);
+
+    void bulkPutBySortedSet(Object key, List<Object> scoreList, List<Object> valueList);
 }

@@ -7,10 +7,7 @@ import mins.study.ranking.common.exception.NotFoundDataException;
 import mins.study.ranking.common.service.RedisCommonService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,10 +28,22 @@ public class RedisRankDataManage {
         return ResponseEntity.ok("Save on redis");
     }
 
-    @PutMapping(value = "/all", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> putUsernameAndScore() {
+    @PutMapping(value = "/all/bySetDataType", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> bySetDataType() {
         List<User> all = userRepository.findAll();
         redisCommonService.bulkPut("ranking", all.stream().map(User::getUsername).collect(toList()), all.stream().map(User::getScore).collect(toList()));
         return ResponseEntity.ok("Save rankingData on redis");
     }
+
+    @PutMapping(value = "/all/bySortedSetDataType", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> bySortedSetDataType() {
+        List<User> all = userRepository.findAll();
+        redisCommonService.bulkPutBySortedSet("rankingForSorting", all.stream().map(User::getScore).collect(toList()), all.stream().map(User::getUsername).collect(toList()));
+        return ResponseEntity.ok("Save rankingData on redis");
+    }
+
+//    @GetMapping("/top100")
+//    public ResponseEntity<Object> top100() {
+//        redisCommonService
+//    }
 }
