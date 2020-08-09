@@ -3,6 +3,7 @@ package mins.study.ranking.common.service;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface RedisCommonService {
@@ -13,5 +14,5 @@ public interface RedisCommonService {
 
     void bulkPutBySortedSet(Object key, List<Object> scoreList, List<Object> valueList);
 
-
+    Optional<List<byte[]>> getTop100(Object key);
 }

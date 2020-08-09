@@ -1,6 +1,8 @@
 package mins.study.ranking.common.service;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.lettuce.core.ScoredValue;
 import io.lettuce.core.api.StatefulRedisConnection;
@@ -9,11 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import mins.study.ranking.common.exception.RedisProcessingException;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -59,6 +59,18 @@ public class RedisCommonServiceImpl implements RedisCommonService {
         } catch (JsonProcessingException e) {
             log.warn("#### jackson lib로 object -> byte[] 를 parsing하는 과정에서 발생한 예외.");
         }
+    }
+
+    @Override
+    public Optional<List<byte[]>> getTop100(Object key) {
+        try {
+            List<byte[]> top100 = statefulRedisConnection.sync().zrevrange(objectMapper.writeValueAsBytes(key), 0, 100);
+            return Optional.ofNullable(top100);
+        } catch (JsonProcessingException e) {
+            log.warn("#### jackson lib로 object -> byte[] 를 parsing하는 과정에서 발생한 예외.");
+        }
+
+        return Optional.empty();
     }
 
     private void commonBulkPutActionValidation(List<Object> keyList, List<Object> valueList) {

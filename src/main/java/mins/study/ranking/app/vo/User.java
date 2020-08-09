@@ -4,14 +4,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.core.serializer.Deserializer;
 import org.springframework.data.annotation.Id;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
 @Getter @Setter
 @NoArgsConstructor
 @ToString
-public class User {
+public class User implements Serializable {
+
+    private final static long serialVersionUID = -7034897190745766939L;
 
     @Id
     private String id;

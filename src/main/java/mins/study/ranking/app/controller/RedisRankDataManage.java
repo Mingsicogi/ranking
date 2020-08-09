@@ -1,5 +1,9 @@
 package mins.study.ranking.app.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.lettuce.core.ScoredValue;
+import io.lettuce.core.Value;
 import lombok.RequiredArgsConstructor;
 import mins.study.ranking.app.repository.UserRepository;
 import mins.study.ranking.app.vo.User;
@@ -9,9 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -22,6 +25,7 @@ public class RedisRankDataManage {
 
     private final UserRepository userRepository;
     private final RedisCommonService redisCommonService;
+    private final ObjectMapper objectMapper;
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> add(@RequestBody Integer seqId) {
@@ -44,8 +48,18 @@ public class RedisRankDataManage {
         return ResponseEntity.ok("Save rankingData on redis");
     }
 
-//    @GetMapping("/top100")
-//    public ResponseEntity<Object> top100() {
-//        redisCommonService
-//    }
+    @GetMapping("/top100")
+    public ResponseEntity<Object> top100() {
+        List<byte[]> top100UserByteArr = redisCommonService.getTop100("rankingForSorting").orElseThrow(NotFoundDataException::new);
+
+        List<User> collect = top100UserByteArr.stream().map(user -> {
+            try {
+                return objectMapper.readValue(user, User.class);
+            } catch (IOException e) {
+                throw new RuntimeException();
+            }
+        }).collect(toList());
+
+        return ResponseEntity.ok(collect);
+    }
 }
