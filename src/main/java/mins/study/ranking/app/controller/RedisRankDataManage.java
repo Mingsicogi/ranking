@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -38,7 +40,7 @@ public class RedisRankDataManage {
     @PutMapping(value = "/all/bySortedSetDataType", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> bySortedSetDataType() {
         List<User> all = userRepository.findAll();
-        redisCommonService.bulkPutBySortedSet("rankingForSorting", all.stream().map(User::getScore).collect(toList()), all.stream().map(User::getUsername).collect(toList()));
+        redisCommonService.bulkPutBySortedSet("rankingForSorting", all.stream().map(User::getScore).collect(toList()), new ArrayList<>(all));
         return ResponseEntity.ok("Save rankingData on redis");
     }
 
