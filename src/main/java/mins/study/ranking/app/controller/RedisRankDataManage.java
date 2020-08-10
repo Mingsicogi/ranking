@@ -1,9 +1,7 @@
 package mins.study.ranking.app.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.lettuce.core.ScoredValue;
-import io.lettuce.core.Value;
+import io.lettuce.core.RedisFuture;
 import lombok.RequiredArgsConstructor;
 import mins.study.ranking.app.repository.UserRepository;
 import mins.study.ranking.app.vo.User;
@@ -15,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.stream.Collectors.toList;
 
@@ -61,5 +61,26 @@ public class RedisRankDataManage {
         }).collect(toList());
 
         return ResponseEntity.ok(collect);
+    }
+
+    @GetMapping("/getOne")
+    public ResponseEntity<Object> getOne(String username) {
+        RedisFuture<byte[]> async = redisCommonService.getAsync(username);
+
+        AtomicReference<User> result = new AtomicReference<>();
+        async.whenComplete((user, NotFoundDataException) -> {
+            try {
+                result.set(objectMapper.readValue(user, User.class));
+            } catch (IOException e) {
+                throw new RuntimeException("byte[] -> user로 변환중 발생한 예외");
+            }
+        });
+
+        System.out.println("#####  " + async.isDone());
+
+        CompletableFuture<byte[]> completableFuture = async.toCompletableFuture();
+        completableFuture.
+
+        return ResponseEntity.ok(result.get());
     }
 }
