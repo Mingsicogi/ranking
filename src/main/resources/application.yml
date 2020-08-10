@@ -12,4 +12,4 @@ redis:
 # common properties
 sample:
   data:
-    count: 100_000
+    count: 100

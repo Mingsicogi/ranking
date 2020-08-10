@@ -1,5 +1,6 @@
 package mins.study.ranking.common.service;
 
+import io.lettuce.core.RedisFuture;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface RedisCommonService {
     void bulkPutBySortedSet(Object key, List<Object> scoreList, List<Object> valueList);
 
     Optional<List<byte[]>> getTop100(Object key);
+
+    RedisFuture<byte[]> getAsync(Object key);
 }

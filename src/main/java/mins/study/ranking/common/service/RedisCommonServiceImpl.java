@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.lettuce.core.RedisFuture;
 import io.lettuce.core.ScoredValue;
 import io.lettuce.core.api.StatefulRedisConnection;
 import lombok.RequiredArgsConstructor;
@@ -71,6 +72,17 @@ public class RedisCommonServiceImpl implements RedisCommonService {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public RedisFuture<byte[]> getAsync(Object key) {
+        try {
+            return statefulRedisConnection.async().get(objectMapper.writeValueAsBytes(key));
+        } catch (JsonProcessingException e) {
+            log.warn("#### jackson lib로 object -> byte[] 를 parsing하는 과정에서 발생한 예외.");
+        }
+
+        throw new RedisProcessingException("Redis Async Exception.");
     }
 
     private void commonBulkPutActionValidation(List<Object> keyList, List<Object> valueList) {
