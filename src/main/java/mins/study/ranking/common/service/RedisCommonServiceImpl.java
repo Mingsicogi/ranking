@@ -85,6 +85,16 @@ public class RedisCommonServiceImpl implements RedisCommonService {
         throw new RedisProcessingException("Redis Async Exception.");
     }
 
+    @Override
+    public Optional<byte[]> getValue(Object key) {
+        try {
+            return Optional.ofNullable(statefulRedisConnection.sync().get(objectMapper.writeValueAsBytes(key)));
+        } catch (JsonProcessingException e) {
+            log.warn("#### jackson lib로 object -> byte[] 를 parsing하는 과정에서 발생한 예외.");
+            return Optional.empty();
+        }
+    }
+
     private void commonBulkPutActionValidation(List<Object> keyList, List<Object> valueList) {
         if (keyList.isEmpty() || valueList.isEmpty()) {
             throw new RedisProcessingException("key list size or value list size cannot be empty.");
