@@ -2,6 +2,7 @@ package mins.study.ranking.common.service;
 
 import io.lettuce.core.RedisFuture;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +18,9 @@ public interface RedisCommonService {
 
     Optional<List<byte[]>> getTop100(Object key);
 
-    RedisFuture<byte[]> getAsync(Object key);
+    RedisFuture<byte[]> getValueAsAsync(Object key);
 
     Optional<byte[]> getValue(Object key);
+
+    Optional<Mono<byte[]>> getValueAsReactive(Object key);
 }

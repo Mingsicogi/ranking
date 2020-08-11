@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mins.study.ranking.common.exception.RedisProcessingException;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -75,7 +76,7 @@ public class RedisCommonServiceImpl implements RedisCommonService {
     }
 
     @Override
-    public RedisFuture<byte[]> getAsync(Object key) {
+    public RedisFuture<byte[]> getValueAsAsync(Object key) {
         try {
             return statefulRedisConnection.async().get(objectMapper.writeValueAsBytes(key));
         } catch (JsonProcessingException e) {
@@ -89,6 +90,16 @@ public class RedisCommonServiceImpl implements RedisCommonService {
     public Optional<byte[]> getValue(Object key) {
         try {
             return Optional.ofNullable(statefulRedisConnection.sync().get(objectMapper.writeValueAsBytes(key)));
+        } catch (JsonProcessingException e) {
+            log.warn("#### jackson lib로 object -> byte[] 를 parsing하는 과정에서 발생한 예외.");
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Mono<byte[]>> getValueAsReactive(Object key) {
+        try {
+            return Optional.ofNullable(statefulRedisConnection.reactive().get(objectMapper.writeValueAsBytes(key)));
         } catch (JsonProcessingException e) {
             log.warn("#### jackson lib로 object -> byte[] 를 parsing하는 과정에서 발생한 예외.");
             return Optional.empty();

@@ -13,11 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -78,7 +77,7 @@ public class RedisRankDataManage {
 
     @GetMapping("/getOne/byAsync")
     public ResponseEntity<Object> getOneByAsync(String username) throws IOException, ExecutionException, InterruptedException {
-        RedisFuture<byte[]> redisFuture = redisCommonService.getAsync(username);
+        RedisFuture<byte[]> redisFuture = redisCommonService.getValueAsAsync(username);
 
         AtomicReference<User> result = new AtomicReference<>();
         redisFuture.toCompletableFuture().whenComplete((user, e) -> {
@@ -92,5 +91,19 @@ public class RedisRankDataManage {
 
         return result.get() == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(ExceptionCd.NOT_FOUND_DATA))
                 : ResponseEntity.ok(result.get());
+    }
+
+    @GetMapping("/getOne/byReactive")
+    public Mono<User> getOneByReactive(String username) {
+        return redisCommonService.getValueAsReactive(username).orElseThrow(NotFoundDataException::new).map(byteUser -> {
+            try {
+                System.out.println("Check point 1");
+                return objectMapper.readValue(byteUser, User.class);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return new User();
+        });
     }
 }
