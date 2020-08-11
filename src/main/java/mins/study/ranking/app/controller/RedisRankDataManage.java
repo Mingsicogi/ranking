@@ -5,15 +5,20 @@ import io.lettuce.core.RedisFuture;
 import lombok.RequiredArgsConstructor;
 import mins.study.ranking.app.repository.UserRepository;
 import mins.study.ranking.app.vo.User;
+import mins.study.ranking.common.cd.ExceptionCd;
+import mins.study.ranking.common.dto.ExceptionDTO;
 import mins.study.ranking.common.exception.NotFoundDataException;
 import mins.study.ranking.common.service.RedisCommonService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.stream.Collectors.toList;
@@ -64,23 +69,28 @@ public class RedisRankDataManage {
     }
 
     @GetMapping("/getOne")
-    public ResponseEntity<Object> getOne(String username) {
-        RedisFuture<byte[]> async = redisCommonService.getAsync(username);
+    public ResponseEntity<Object> getOne(String username) throws IOException {
+        Optional<byte[]> value = redisCommonService.getValue(username);
+
+        return value.isEmpty() ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(ExceptionCd.NOT_FOUND_DATA))
+                : ResponseEntity.ok(objectMapper.readValue(value.get(), User.class));
+    }
+
+    @GetMapping("/getOne/byAsync")
+    public ResponseEntity<Object> getOneByAsync(String username) throws IOException, ExecutionException, InterruptedException {
+        RedisFuture<byte[]> redisFuture = redisCommonService.getAsync(username);
 
         AtomicReference<User> result = new AtomicReference<>();
-        async.whenComplete((user, NotFoundDataException) -> {
+        redisFuture.toCompletableFuture().whenComplete((user, e) -> {
             try {
                 result.set(objectMapper.readValue(user, User.class));
-            } catch (IOException e) {
-                throw new RuntimeException("byte[] -> user로 변환중 발생한 예외");
+                System.out.println("result = " + result.toString());
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
             }
         });
 
-        System.out.println("#####  " + async.isDone());
-
-        CompletableFuture<byte[]> completableFuture = async.toCompletableFuture();
-        completableFuture.
-
-        return ResponseEntity.ok(result.get());
+        return result.get() == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(ExceptionCd.NOT_FOUND_DATA))
+                : ResponseEntity.ok(result.get());
     }
 }

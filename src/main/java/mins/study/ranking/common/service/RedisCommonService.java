@@ -18,4 +18,6 @@ public interface RedisCommonService {
     Optional<List<byte[]>> getTop100(Object key);
 
     RedisFuture<byte[]> getAsync(Object key);
+
+    Optional<byte[]> getValue(Object key);
 }
