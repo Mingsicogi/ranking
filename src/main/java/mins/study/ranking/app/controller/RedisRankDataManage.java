@@ -38,6 +38,19 @@ public class RedisRankDataManage {
         return ResponseEntity.ok("Save on redis");
     }
 
+    @PutMapping(value = "/asReactive", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<Object>> addAsReactive(@RequestBody Integer seqId) {
+        User user = userRepository.findBySeqId(seqId).orElseThrow(NotFoundDataException::new);
+        Mono<Long> result = redisCommonService.putAsReactive(user.getUsername(), user).orElseThrow(() -> new RuntimeException("Occur system error while processing in redis."));
+        return result.flatMap(value -> {
+            if(value != null && value > 0) {
+                return Mono.just(ResponseEntity.ok("Save on redis!!(Reactive)"));
+            }
+
+            return Mono.just(ResponseEntity.badRequest().body("Fail saving data on redis..."));
+        });
+    }
+
     @PutMapping(value = "/all/bySetDataType", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> bySetDataType() {
         List<User> all = userRepository.findAll();
