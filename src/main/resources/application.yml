@@ -1,5 +1,9 @@
 server:
   port: 1001
+  tomcat:
+    threads:
+      max: 1
+      min-spare: 1
 
 
 # redis properties
@@ -13,3 +17,9 @@ redis:
 sample:
   data:
     count: 100
+
+
+spring:
+  task:
+    execution:
+      thread-name-prefix: mins-thread
