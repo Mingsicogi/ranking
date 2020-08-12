@@ -1,8 +1,6 @@
 package mins.study.ranking.common.service;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.lettuce.core.RedisFuture;
 import io.lettuce.core.ScoredValue;
@@ -13,7 +11,6 @@ import mins.study.ranking.common.exception.RedisProcessingException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.*;
 
@@ -33,6 +30,17 @@ public class RedisCommonServiceImpl implements RedisCommonService {
         } catch (JsonProcessingException e) {
             log.warn("#### jackson lib로 object -> byte[] 를 parsing하는 과정에서 발생한 예외.");
         }
+    }
+
+    @Override
+    public Optional<Mono<Long>> putAsReactive(Object key, Object value) {
+        try {
+            return Optional.ofNullable(statefulRedisConnection.reactive().append(objectMapper.writeValueAsBytes(key), objectMapper.writeValueAsBytes(value)));
+        } catch (JsonProcessingException e) {
+            log.warn("#### jackson lib로 object -> byte[] 를 parsing하는 과정에서 발생한 예외.");
+        }
+
+        return Optional.empty();
     }
 
     @Override
