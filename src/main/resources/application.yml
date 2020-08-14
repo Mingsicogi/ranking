@@ -6,6 +6,7 @@ server:
       min-spare: 1
 
 
+
 # redis properties
 redis:
   host: localhost
@@ -23,3 +24,8 @@ spring:
   task:
     execution:
       thread-name-prefix: mins-thread
+  data:
+    mongodb:
+      uri: localhost
+      port: 27017
+      database: ranking

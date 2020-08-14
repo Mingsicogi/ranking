@@ -6,6 +6,7 @@ import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.codec.ByteArrayCodec;
 import io.lettuce.core.codec.RedisCodec;
+import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -44,6 +45,19 @@ public class RedisConfiguration {
         return connect;
     }
 
+    @Bean
+    public StatefulRedisPubSubConnection<byte[], byte[]> statefulRedisPubSubConnection(RedisClient redisClient) {
+        StatefulRedisPubSubConnection<byte[], byte[]> statefulRedisPubSubConnection = null;
+        try {
+            statefulRedisPubSubConnection = redisClient.connectPubSub(redisCodec());
+            log.info("### Redis Pub/Sub Connection Success!! ###");
+
+        } catch (RedisConnectionException e) {
+            log.warn("### Redis Pub/Sub Connection Fail... Please check redis configuration or redis server.");
+        }
+
+        return statefulRedisPubSubConnection;
+    }
 
     private RedisCodec<byte[], byte[]> redisCodec() {
         return new ByteArrayCodec();

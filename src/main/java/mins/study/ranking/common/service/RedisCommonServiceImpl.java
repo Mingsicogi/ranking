@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.lettuce.core.RedisFuture;
 import io.lettuce.core.ScoredValue;
 import io.lettuce.core.api.StatefulRedisConnection;
+import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mins.study.ranking.common.exception.RedisProcessingException;
@@ -20,6 +21,7 @@ import java.util.*;
 public class RedisCommonServiceImpl implements RedisCommonService {
 
     private final StatefulRedisConnection<byte[], byte[]> statefulRedisConnection;
+    private final StatefulRedisPubSubConnection<byte[], byte[]> statefulRedisPubSubConnection;
 
     private final ObjectMapper objectMapper;
 
@@ -113,6 +115,11 @@ public class RedisCommonServiceImpl implements RedisCommonService {
             return Optional.empty();
         }
     }
+
+//    public void pub(Object key, Object value) {
+//        statefulRedisPubSubConnection.sync().;
+//    }
+
 
     private void commonBulkPutActionValidation(List<Object> keyList, List<Object> valueList) {
         if (keyList.isEmpty() || valueList.isEmpty()) {

@@ -1,13 +1,11 @@
 package mins.study.ranking.common.service;
 
 import io.lettuce.core.RedisFuture;
-import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
 public interface RedisCommonService {
 
     void put(Object key, Object value);
