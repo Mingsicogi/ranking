@@ -9,15 +9,15 @@ server:
 
 # redis properties
 redis:
-  host: localhost
+  host: 52.79.61.39
   port: 6379
-  db: 1
+  db: 12
 
 
 # common properties
 sample:
   data:
-    count: 100
+    count: 10_000
 
 
 spring:
