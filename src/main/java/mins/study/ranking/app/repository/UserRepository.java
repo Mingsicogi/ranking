@@ -1,11 +1,12 @@
 package mins.study.ranking.app.repository;
 
 import mins.study.ranking.app.vo.User;
-import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-public interface UserRepository extends ReactiveMongoRepository<User, String> {
+public interface UserRepository extends MongoRepository<User, String> {
 
     Optional<User> findByUsername(String username);
 

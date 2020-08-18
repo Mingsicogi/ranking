@@ -1,10 +1,13 @@
 package mins.study.ranking;
 
-import lombok.RequiredArgsConstructor;
 import mins.study.ranking.app.repository.UserRepository;
 import mins.study.ranking.app.vo.User;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
@@ -16,13 +19,17 @@ import java.util.stream.Stream;
 
 @Primary
 @Configuration
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class InitializeConfiguration {
 
     private final UserRepository userRepository;
 
     @Value("${sample.data.count}")
     private Integer sampleCount;
+
+    public InitializeConfiguration(@Qualifier("userRepository") UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @PostConstruct
     private void initDataSetting() {

@@ -26,6 +26,6 @@ spring:
       thread-name-prefix: mins-thread
   data:
     mongodb:
+      database: ranking
       uri: localhost
       port: 27017
-      database: ranking
