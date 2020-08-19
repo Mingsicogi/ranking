@@ -1,0 +1,51 @@
+package mins.study.ranking.app.controller;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.lettuce.core.ScoredValue;
+import lombok.RequiredArgsConstructor;
+import mins.study.ranking.app.repository.UserRepository;
+import mins.study.ranking.app.vo.User;
+import mins.study.ranking.common.service.RedisSortedSetService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
+
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/rankData/manage/onRedis/byReactive")
+@RequiredArgsConstructor
+public class ReactiveRedisDataManage {
+
+    private final UserRepository userRepository;
+
+    private final RedisSortedSetService redisSortedSetService;
+
+    private final ObjectMapper objectMapper;
+
+    private static byte[] RANKING_DATA_REDIS_KEY;
+
+    @PostConstruct
+    public void init() throws JsonProcessingException {
+        RANKING_DATA_REDIS_KEY = objectMapper.writeValueAsBytes("rankingData");
+    }
+
+    @PostMapping("/loadSampleData")
+    public ResponseEntity<Mono<Long>> loadSampleData() {
+        return ResponseEntity.ok(redisSortedSetService.add(RANKING_DATA_REDIS_KEY,
+                userRepository.findAll().map(user -> {
+                    try {
+                        return ScoredValue.fromNullable(user.getScore().doubleValue(), objectMapper.writeValueAsBytes(user));
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+
+                        throw new RuntimeException("System error when processing data(object -> byte[])");
+                    }
+                }).collect(Collectors.toList())));
+    }
+}

@@ -51,19 +51,19 @@ public class RedisRankDataManage {
         });
     }
 
-    @PutMapping(value = "/all/bySetDataType", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> bySetDataType() {
-        List<User> all = userRepository.findAll();
-        redisCommonService.bulkPut("ranking", all.stream().map(User::getUsername).collect(toList()), all.stream().map(User::getScore).collect(toList()));
-        return ResponseEntity.ok("Save rankingData on redis");
-    }
+//    @PutMapping(value = "/all/bySetDataType", consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<Object> bySetDataType() {
+//        List<User> all = userRepository.findAll();
+//        redisCommonService.bulkPut("ranking", all.stream().map(User::getUsername).collect(toList()), all.stream().map(User::getScore).collect(toList()));
+//        return ResponseEntity.ok("Save rankingData on redis");
+//    }
 
-    @PutMapping(value = "/all/bySortedSetDataType", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> bySortedSetDataType() {
-        List<User> all = userRepository.findAll();
-        redisCommonService.bulkPutBySortedSet("rankingForSorting", all.stream().map(User::getScore).collect(toList()), new ArrayList<>(all));
-        return ResponseEntity.ok("Save rankingData on redis");
-    }
+//    @PutMapping(value = "/all/bySortedSetDataType", consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<Object> bySortedSetDataType() {
+//        List<User> all = userRepository.findAll();
+//        redisCommonService.bulkPutBySortedSet("rankingForSorting", all.stream().map(User::getScore).collect(toList()), new ArrayList<>(all));
+//        return ResponseEntity.ok("Save rankingData on redis");
+//    }
 
     @GetMapping("/top100")
     public ResponseEntity<Object> top100() {
