@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
 import static java.util.stream.Collectors.toList;
 
@@ -34,7 +35,7 @@ public class ReactiveRedisDataManage {
     }
 
     @PostMapping("/loadSampleData")
-    public Mono<Long> loadSampleData() {
+    public Mono<Long> loadSampleData(HttpServletRequest request) {
         return redisSortedSetService.add(RANKING_DATA_REDIS_KEY, userRepository.findAll().stream().map(user -> {
             try {
                 return ScoredValue.fromNullable(user.getScore().doubleValue(), objectMapper.writeValueAsBytes(user));
