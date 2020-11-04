@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Optional;
 
-public interface RedisCommonService {
+public interface RedisCacheService {
 
     void put(Object key, Object value);
 
