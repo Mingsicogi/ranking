@@ -5,9 +5,6 @@ import mins.study.ranking.app.vo.User;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
@@ -19,7 +16,6 @@ import java.util.stream.Stream;
 
 @Primary
 @Configuration
-//@RequiredArgsConstructor
 public class InitializeConfiguration {
 
     private final UserRepository userRepository;
@@ -34,7 +30,8 @@ public class InitializeConfiguration {
     @PostConstruct
     private void initDataSetting() {
         List<User> sampleUserList = Stream.iterate(1, count -> count + 1).limit(sampleCount)
-                .map(count -> new User(count, RandomStringUtils.randomAlphabetic(10) + "_" + count, new BigInteger(RandomStringUtils.randomNumeric(2, 3)))).collect(Collectors.toList());
+                .map(count -> new User(count, RandomStringUtils.randomAlphabetic(10) + "_" + count, new BigInteger(RandomStringUtils.randomNumeric(2, 3))))
+                .collect(Collectors.toList());
 
         userRepository.saveAll(sampleUserList);
     }
