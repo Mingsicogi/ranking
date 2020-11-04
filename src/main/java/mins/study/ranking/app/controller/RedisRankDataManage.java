@@ -8,7 +8,7 @@ import mins.study.ranking.app.vo.User;
 import mins.study.ranking.common.cd.ExceptionCd;
 import mins.study.ranking.common.dto.ExceptionDTO;
 import mins.study.ranking.common.exception.NotFoundDataException;
-import mins.study.ranking.common.service.RedisCommonService;
+import mins.study.ranking.common.service.RedisCacheService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,7 @@ import static java.util.stream.Collectors.toList;
 public class RedisRankDataManage {
 
     private final UserRepository userRepository;
-    private final RedisCommonService redisCommonService;
+    private final RedisCacheService redisCommonService;
     private final ObjectMapper objectMapper;
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
